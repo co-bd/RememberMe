@@ -53,13 +53,7 @@ struct LoginFormView: View {
                                 .padding(.bottom, 20)
             }
             
-            
-    //            Text("Login").font(.headline)
-    //                .foregroundColor(.white)
-    //                .padding()
-    //                .frame(width: 220, height: 60)
-    //                .background(Color.blue)
-    //                .cornerRadius(15.0)
+      
             Button(action: {
                                 if self.username == storedUser && self.password == storedPass {
                                     self.authentication = true
@@ -129,12 +123,6 @@ struct HomeView: View {
                                                               self.sourceType = .camera
                                                               self.isImagePickerDisplay.toggle()
                             }
-        //                    Spacer()
-        //
-        //                    SwiftUI.Button("Photo") {
-        //                                                      self.sourceType = .photoLibrary
-        //                                                      self.isImagePickerDisplay.toggle()
-        //                                                  }
                         Spacer()
                             Button("Search"){
                                 searchTool = true }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.trailing)
@@ -171,10 +159,6 @@ struct EventDatabaseView: View {
                 HStack{
                     Spacer()
                     Image("both").resizable().frame(width: 304, height: 68, alignment: .center)
-    //                Image("remembermelogo").resizable().frame(width: 200, height: 15, alignment: .center)//.scaledToFit()
-    //                Spacer()
-    //                Image("ncaalogo").resizable().frame(width: 25, height: 25, alignment: .topTrailing)
-                    
                 }
                 Spacer()
                 
@@ -244,19 +228,12 @@ struct AddEventView: View {
             HStack{
                 Spacer()
                 Image("both").resizable().frame(width: 304, height: 68, alignment: .center)
-//                Image("remembermelogo").resizable().frame(width: 200, height: 15, alignment: .center)//.scaledToFit()
-//                Spacer()
-//                Image("ncaalogo").resizable().frame(width: 25, height: 25, alignment: .topTrailing)
-                
+
             }
             Spacer()
         }
         VStack{
             Group{
-    //            HStack{
-    //                Text("Event Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-    //                Spacer()
-    //            }
                 HStack{
                     TextField("Event Name", text: $eventName).padding()
                         .cornerRadius(5.0)
@@ -264,10 +241,6 @@ struct AddEventView: View {
                     Spacer()
                 }
                 Spacer()
-    //            HStack{
-    //                Text("Event Date").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-    //                Spacer()
-    //            }
                 HStack{
                     TextField("Event Date", text: $eventDate).padding()
                         .cornerRadius(5.0)
@@ -277,10 +250,6 @@ struct AddEventView: View {
                 }
                 Spacer()
             }
-//            HStack{
-//                Text("Database Upload").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-//                Spacer()
-//            }
             
             Group{
                 HStack{
@@ -344,17 +313,9 @@ struct AddPlayerView: View {
             HStack{
                 Spacer()
                 Image("both").resizable().frame(width: 304, height: 68, alignment: .center)
-//                Image("remembermelogo").resizable().frame(width: 200, height: 15, alignment: .center)//.scaledToFit()
-//                Spacer()
-//                Image("ncaalogo").resizable().frame(width: 25, height: 25, alignment: .topTrailing)
-                
             }
             Spacer()
             VStack{
-//            HStack{
-//                Text("Player Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-//                Spacer()
-//            }
             Group {
                 HStack{
                     TextField("Player Name", text: $name).padding()
@@ -363,10 +324,6 @@ struct AddPlayerView: View {
                     Spacer()
                 }
                 Spacer()
-    //            HStack{
-    //                Text("Year of Graduation").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-    //                Spacer()
-    //            }
                 HStack{
                     TextField("Year of Graduation", text: $gradYear).padding()
                         .cornerRadius(5.0)
@@ -374,10 +331,6 @@ struct AddPlayerView: View {
                     Spacer()
                 }
                 Spacer()
-//            HStack{
-//                Text("Club Team").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-//                Spacer()
-//            }
             }
             Group{
                 HStack{
@@ -387,10 +340,6 @@ struct AddPlayerView: View {
                     Spacer()
                 }
                 Spacer()
-    //            HStack{
-    //                Text("High School").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-    //                Spacer()
-    //            }
                 HStack{
                     TextField("High School", text: $highSchool).padding()
                         .cornerRadius(5.0)
@@ -417,11 +366,6 @@ struct AddPlayerView: View {
                         Text("Save")
                     }
             }
-//            Profile(name: name, gradYear: gradYear, clubTeam: clubTeam, highSchool: highSchool, emailAddress: emailAddress, notes: notes)
-//            HStack{
-//                Text("Email Address").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-//                Spacer()
-//            }
         }
         
         VStack{
