@@ -1,4 +1,6 @@
 
+
+ 
 import SwiftUI
 import UIKit
 import AuthenticationServices
@@ -86,7 +88,6 @@ struct HomeView: View {
     @State private var searchTool = false
     
 //    @State private var event: Event
-
     @ViewBuilder var body: some View {
         
 //        return Group {
@@ -99,7 +100,7 @@ struct HomeView: View {
                 AddEventView(addEventData: $addEventData, eventData: $eventData, searchTool: $searchTool, addPlayerData: $addPlayerData)
             }
             else if searchTool == true{
-                SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData)
+                SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData)
             }
             else {
             
@@ -205,7 +206,7 @@ struct EventDatabaseView: View {
                         Button("Search"){
                             eventData = false
                             searchTool = true
-                            SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData)
+                            SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData)
                         }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.trailing)
                         Spacer()
                     }
@@ -295,9 +296,7 @@ struct AddEventView: View {
 //        Text(event.eventName)
 //    }
 //}
-
 //adding in function to add an excel sheet
-
 struct AddPlayerView: View {
     @StateObject var players = Profile()
     @State var name: String = ""
@@ -387,6 +386,15 @@ struct AddPlayerView: View {
 struct SearchView: View{
     @Binding var searchTool: Bool
     @Binding var addPlayerData: Bool
+    @Binding var addEventData: Bool
+    @Binding var eventData: Bool
+    @State var playerName: String = ""
+    @State var eventName: String = ""
+    
+    @State var databaseUpload: String = ""
+    @StateObject var events = Event()
+    @StateObject var profile = Profile()
+
 //    @Binding var player: Profile
 //    @Binding var event: Event
     
@@ -404,19 +412,41 @@ struct SearchView: View{
                 Spacer()
             
             VStack{
-                HStack{
-//                    TextField("Player Name", text: $player.gradYear).padding()
-//                        .cornerRadius(5.0)
-//                        .padding(.bottom, 20)
-                    Text("Player Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
+                
+                Group{
+                    HStack{
+                        TextField("Player Name", text: $playerName).padding()
+                            .cornerRadius(5.0)
+                            .padding(.bottom, 20)
+                        Spacer()
+                    }
+                    Spacer()
+                    HStack{
+                        TextField("Event Name", text: $eventName).padding()
+                            .cornerRadius(5.0)
+                            .padding(.bottom, 20)
+                        
+                        Spacer()
+                    }
                     Spacer()
                 }
+                
+                SwiftUI.Button("Search"){}.font(.footnote).foregroundColor(.black).multilineTextAlignment(.leading).padding()
                 Spacer()
-                HStack{
-                    Text("Event Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
-                    Spacer()
-                }
-                Spacer()
+
+//                HStack{
+////                    TextField("Player Name", text: $player.gradYear).padding()
+////                        .cornerRadius(5.0)
+////                        .padding(.bottom, 20)
+//                    Text("Player Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
+//                    Spacer()
+//                }
+//                Spacer()
+//                HStack{
+//                    Text("Event Name").fontWeight(.bold).font(.body).multilineTextAlignment(.leading).padding()
+//                    Spacer()
+//                }
+//                Spacer()
             }
             
             VStack{
@@ -495,4 +525,3 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
-
