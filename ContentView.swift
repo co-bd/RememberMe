@@ -1,9 +1,15 @@
-
+//
+//  ContentView.swift
+//  RemMe
+//
+//  Created by Crea on 11/21/21.
+//
 
  
 import SwiftUI
 import UIKit
 import AuthenticationServices
+import CoreXLSX
 
 let storedUser = "Cbaker"
 let storedPass = "NEFC"
@@ -34,7 +40,6 @@ struct LoginFormView: View {
     @State var username: String = ""
     @State var password: String = ""
     @State private var error = false
-//    @State private var authentication = false
     @Binding var authentication: Bool
 
 
@@ -86,21 +91,23 @@ struct HomeView: View {
     @State private var addEventData = false
     @State private var addPlayerData = false
     @State private var searchTool = false
+    @State private var upload = false
     
-//    @State private var event: Event
     @ViewBuilder var body: some View {
-        
-//        return Group {
+    
             
             if eventData ==
             true{
-                EventDatabaseView(eventData: $eventData, addEventData: $addEventData, searchTool: $searchTool, addPlayerData: $addPlayerData)
+                EventDatabaseView(eventData: $eventData, addEventData: $addEventData, searchTool: $searchTool, addPlayerData: $addPlayerData, upload: $upload)
             }
             else if addEventData == true{
-                AddEventView(addEventData: $addEventData, eventData: $eventData, searchTool: $searchTool, addPlayerData: $addPlayerData)
+                AddEventView(addEventData: $addEventData, eventData: $eventData, searchTool: $searchTool, addPlayerData: $addPlayerData, upload: $upload)
             }
             else if searchTool == true{
-                SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData)
+                SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData, upload: $upload)
+            }
+            else if upload == true{
+                ExcelPlayerView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData, upload: $upload)
             }
             else {
             
@@ -108,14 +115,12 @@ struct HomeView: View {
                     Image("ncaa").resizable().aspectRatio(contentMode: .fill)}
                     VStack {
                         Spacer()
-        //                Spacer()
                         HStack{
                             Spacer()
                             SwiftUI.Button("Event Database"){
                                 eventData = true
                             }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.center)
                             Spacer()
-        //                    Spacer()
                             SwiftUI.Button("Add Event"){
                                 addEventData = true
                             }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.center)
@@ -136,21 +141,20 @@ struct HomeView: View {
                         
                     
                     }
-            
-//        }
         
-    }
+            }
     }
 }
 
 
 struct EventDatabaseView: View {
     @StateObject var events = Event()
-//    var events: Event
     @Binding var eventData: Bool
     @Binding var addEventData: Bool
     @Binding var searchTool: Bool
     @Binding var addPlayerData: Bool
+    @Binding var upload: Bool
+
     
     var body: some View{
         
@@ -187,7 +191,6 @@ struct EventDatabaseView: View {
                 Spacer()
                 VStack {
                     Spacer()
-    //                Spacer()
                     HStack{
                         Spacer()
                         SwiftUI.Button("Home"){
@@ -195,18 +198,17 @@ struct EventDatabaseView: View {
                             HomeView()
                         }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.center)
                         Spacer()
-    //                    Spacer()
                         SwiftUI.Button("Add Event"){
                             eventData = false
                             addEventData = true
                             
-                            AddEventView(addEventData: $addEventData, eventData: $eventData, searchTool: $searchTool, addPlayerData: $addPlayerData)
+                            AddEventView(addEventData: $addEventData, eventData: $eventData, searchTool: $searchTool, addPlayerData: $addPlayerData, upload: $upload)
                         }.padding().font(.footnote).foregroundColor(.black).multilineTextAlignment(.center)
                         Spacer()
                         Button("Search"){
                             eventData = false
                             searchTool = true
-                            SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData)
+                            SearchView(searchTool: $searchTool, addPlayerData: $addPlayerData, addEventData: $addEventData, eventData: $eventData, upload: $upload)
                         }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.trailing)
                         Spacer()
                     }
@@ -224,6 +226,8 @@ struct AddEventView: View {
     @Binding var eventData: Bool
     @Binding var searchTool: Bool
     @Binding var addPlayerData: Bool
+    @Binding var upload: Bool
+
     var body: some View{
         VStack {
             HStack{
@@ -263,7 +267,7 @@ struct AddEventView: View {
             }
             Button(action: {let event = Act(eventName: eventName, eventDate: eventDate)
                 events.event.append(event)
-                EventDatabaseView(eventData: $eventData, addEventData: $addEventData, searchTool: $searchTool, addPlayerData: $addPlayerData)
+                EventDatabaseView(eventData: $eventData, addEventData: $addEventData, searchTool: $searchTool, addPlayerData: $addPlayerData, upload: $upload)
             }) {
                     Text("Save")
                 }
@@ -275,7 +279,6 @@ struct AddEventView: View {
         VStack{
                 Spacer()
                 HStack{
-//                    Spacer()
                     SwiftUI.Button("Home"){
                         addEventData = false
                         HomeView()
@@ -288,6 +291,7 @@ struct AddEventView: View {
     }
 }
 
+
 //struct EventView: View {
 //
 //    var event: Event
@@ -297,6 +301,105 @@ struct AddEventView: View {
 //    }
 //}
 //adding in function to add an excel sheet
+
+struct ExcelPlayerView : View {
+    @StateObject var players = Profile()
+    @StateObject var events = Event()
+    @Binding var searchTool: Bool
+    @Binding var addPlayerData: Bool
+    @Binding var addEventData: Bool
+    @Binding var eventData: Bool
+    @Binding var upload: Bool
+    
+    var body: some View{
+        VStack{
+            
+            guard let file = XLSXFile(filepath: "./file.xlsx") else {
+                          fatalError("XLSX file corrupted or does not exist")
+            }
+            var data = readDataFromCSV(fileName: String, fileType: <#T##String#>)
+            data = cleanRows(file: data)
+            let csvRows = uploading(data: data)
+            print(csvRows[1][1])
+            
+        }
+    }
+    
+    func readDataFromCSV(fileName:String, fileType: String)-> String!{
+            guard let filepath = Bundle.main.path(forResource: fileName, ofType: fileType)
+                else {
+                    return nil
+            }
+            do {
+                var contents = try String(contentsOfFile: filepath, encoding: .utf8)
+                contents = cleanRows(file: contents)
+                return contents
+            } catch {
+                print("File Read Error for file \(filepath)")
+                return nil
+            }
+        }
+    
+    func cleanRows(file:String)->String{
+        var cleanFile = file
+        cleanFile = cleanFile.replacingOccurrences(of: "\r", with: "\n")
+        cleanFile = cleanFile.replacingOccurrences(of: "\n\n", with: "\n")
+        //        cleanFile = cleanFile.replacingOccurrences(of: ";;", with: "")
+        //        cleanFile = cleanFile.replacingOccurrences(of: ";\n", with: "")
+        return cleanFile
+    }
+    
+    func uploading(data: String) -> [[String]]{
+//        guard let file = XLSXFile(filepath: "./file.xlsx") else {
+//          fatalError("XLSX file corrupted or does not exist")
+//        }
+            var result: [[String]] = []
+            let rows = data.components(separatedBy: "\n")
+            for row in rows {
+                let columns = row.components(separatedBy: ";")
+                result.append(columns)
+            }
+            return result
+        }
+
+//        do{
+//            for path in try file.parseWorksheetPaths() {
+//                let ws = try file.parseWorksheet(at: path)
+//                for row in ws.sheetData.rows {
+//                    var i=0;
+//                    var col: String
+//                    for c in row.cells {
+//                        if i == 0{
+//                            if c == "Name"{
+//                                col = "Name"
+//                            }
+//                            else if c == "Graduation Year"{
+//                                col = "Graduation Year"
+//                            }
+//                            else if c == "Club Team"{
+//                                col = "Club Team"
+//                            }
+//                            else if c == "High School" {
+//                                col = "High School"
+//                            }
+//                            else if c == "Email Address"{
+//                                col = "Email Address"
+//                            }
+//
+//                        }
+//                        i=1;
+//                    }
+//                }
+//            }
+//        }
+//        catch{
+//            print(error.localizedDescription)
+//        }
+//    }
+}
+
+
+
 struct AddPlayerView: View {
     @StateObject var players = Profile()
     @State var name: String = ""
@@ -307,6 +410,7 @@ struct AddPlayerView: View {
     @State var notes: String = ""
     @State private var error = false
     @Binding var addPlayerData: Bool
+
     var body: some View{
         VStack {
             HStack{
@@ -370,15 +474,13 @@ struct AddPlayerView: View {
         VStack{
                 Spacer()
                 HStack{
-//                    Spacer()
                     SwiftUI.Button("Home"){
                         addPlayerData = false
                         HomeView()
                     }.font(.footnote).foregroundColor(.black).multilineTextAlignment(.leading).padding()
                     Spacer()
-//                    Spacer()
                 }
-        }
+            }
         }
     }
 }
@@ -388,15 +490,13 @@ struct SearchView: View{
     @Binding var addPlayerData: Bool
     @Binding var addEventData: Bool
     @Binding var eventData: Bool
+    @Binding var upload: Bool
     @State var playerName: String = ""
     @State var eventName: String = ""
     
     @State var databaseUpload: String = ""
     @StateObject var events = Event()
     @StateObject var profile = Profile()
-
-//    @Binding var player: Profile
-//    @Binding var event: Event
     
     var body: some View{
         
@@ -431,7 +531,7 @@ struct SearchView: View{
                     Spacer()
                 }
                 
-                SwiftUI.Button("Search"){}.font(.footnote).foregroundColor(.black).multilineTextAlignment(.leading).padding()
+                SwiftUI.Button("Search"){}.font(.footnote).foregroundColor(.blue).multilineTextAlignment(.leading).padding()
                 Spacer()
 
 //                HStack{
